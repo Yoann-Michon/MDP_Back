@@ -29,6 +29,9 @@ import { ProductsModule } from './products/products.module';
         url: `postgres://${configService.get<string>('DB_USERNAME')}:${configService.get<string>('DB_PASSWORD')}@${configService.get<string>('DB_HOSTNAME')}.frankfurt-postgres.render.com/${configService.get<string>('DB_NAME')}`,
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: true,
+        ssl: {
+          rejectUnauthorized: false,
+        },
       }),
       inject: [ConfigService],
     }),
