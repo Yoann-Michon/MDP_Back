@@ -1,62 +1,28 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 import { User } from './entities/user.entity';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import * as bcrypt from 'bcrypt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User) private usersRepository: Repository<User>) {}
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+  ) {}
 
-    async create(dto:CreateUserDto):Promise<User> {
-      try {
-        return await this.usersRepository.save(dto);
-      } catch (error) {
-        throw new ConflictException();
-      }
-    }
-  
-    async findAll():Promise<User[]>  {
-      try {
-        return await this.usersRepository.find();
-      } catch (error) {
-        throw new ConflictException();
-      }
-    }
-  
-    async findOne(id: number):Promise<User>  {
-      try {
-        return await this.usersRepository.findOneBy({id})
-      } catch (error) {
-        throw new ConflictException();
-      }
-    }
-  
-    async update(id: number, dto: CreateUserDto):Promise<User>  {
-      let done = await this.usersRepository.update(id,dto);
-      if (done.affected !=1)
-        throw new NotFoundException(id)
-      return this.findOne(id)
-    }
-  
-    async remove(id: number):Promise<void>  {
-      let done: DeleteResult = await this.usersRepository.delete(id);
-      if(done.affected !=1)
-        throw new NotFoundException(id)
-    }
+  async findOne(username: string): Promise<User | undefined> {
+    return this.usersRepository.findOne({ where: { username } });
+  }
 
-    async getUserByName(username: string): Promise<User> {
-      try {
-        const user = await this.usersRepository.findOneBy({ username });
-        if (!user) {
-          throw new NotFoundException(`User with name ${name} not found`);
-        }
-        return user;
-      } catch (error) {
-        throw new ConflictException('Failed to retrieve user by name');
-      }
-    }
+  async create(user: Partial<User>): Promise<User> {
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(user.password, salt);
+    const newUser = this.usersRepository.create({
+      ...user,
+      password: hashedPassword,
+      role: user.role,
+    });
+    return this.usersRepository.save(newUser);
+  }
 }

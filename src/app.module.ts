@@ -10,6 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { ProductsModule } from './products/products.module';
+import { StripeModule } from './stripe/stripe.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ProductsModule } from './products/products.module';
     AuthModule,
     UsersModule,
     ProductsModule,
+    StripeModule,
     ConfigModule.forRoot({ envFilePath: '.env' }),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
@@ -35,6 +37,7 @@ import { ProductsModule } from './products/products.module';
       }),
       inject: [ConfigService],
     }),
+    StripeModule,
   ],
   controllers: [AppController, AuthController],
   providers: [AppService, AuthService],
