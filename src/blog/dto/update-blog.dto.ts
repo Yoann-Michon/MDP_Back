@@ -6,4 +6,5 @@ export class UpdateBlogDto extends PartialType(CreateBlogDto) {
     title?: string;
     content?: string;
     link?: string;
+    imageLink?: string;
 }

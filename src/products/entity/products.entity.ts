@@ -16,4 +16,7 @@ export class Product {
 
   @Column()
   locationImg: string;
+
+  @Column()
+  stock: number
 }

@@ -13,4 +13,7 @@ export class Blog {
 
   @Column()
   link: string;
+
+  @Column({ nullable: true })
+  imageLink: string;
 }

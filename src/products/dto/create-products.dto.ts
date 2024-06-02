@@ -16,4 +16,7 @@ export class CreateProductDto {
   @IsString()
   @IsNotEmpty()
   locationImg: string;
+
+  @IsNumber()
+  stock?: number
 }

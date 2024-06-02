@@ -17,22 +17,24 @@ export class BlogService {
 
   async create(url: string): Promise<Blog> {
     try {
-      const { title, content } = await scrapeArticle(url);
+      const { title, content, imageUrl } = await scrapeArticle(url);
+      
       //const imgbbImageUrl = await uploadImageToImgbb(imageUrl);
-  
+      console.log(await scrapeArticle(url))
       const article = new Blog();
       article.title = title;
+      console.log("article",article.title)
       article.link = url;
+      console.log("article",article.link)
       article.content = content;
-     // article.imagelink = imgbbImageUrl;
-  
+      console.log("article",article.content)
+      article.imageLink = imageUrl;
+      console.log("article",article)
       return await this.blogRepository.save(article);
     } catch (error) {
       throw new Error('Failed to create article from URL');
     }
   }
-  
-  
 
   findAll() {
     try {
@@ -66,12 +68,13 @@ export class BlogService {
 async function uploadImageToImgbb(imageUrl: string): Promise<string> {
   const formData = new FormData();
   formData.append("image", imageUrl);
-
+  console.log(imageUrl)
   const response = await fetch(`https://api.imgbb.com/1/upload?key=${process.env.IMGBB_KEY}`, {
     method: "POST",
     body: formData
   });
-
+  console.log(response);
+  
   const data = await response.json();
 
   if (!data.success) {
@@ -81,18 +84,84 @@ async function uploadImageToImgbb(imageUrl: string): Promise<string> {
   return data.data.url;
 }
 
-async function scrapeArticle(url: string): Promise<{ title: string, content: string ,imageUrl: string}> {
-  //Initialisation du navigateur
-  const browser = await puppeteer.launch();
+async function scrapeArticle(url: string): Promise<{ title: string, content: string, imageUrl: string }> {
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-accelerated-2d-canvas',
+      '--disable-gpu'
+    ]
+  });
+
   const page = await browser.newPage();
-  //Navigation sur la page de l'url
-  await page.goto(url);
-  //Recuperation du titre, contenue , de image
-  const title = await page.$eval('h1', element => element.textContent.trim());
-  const content = await page.$$eval('p', elements => elements.slice(0, 2).map(element => element.textContent.trim()).join(' '));
-  const imageUrl = await page.$$eval('img', elements => elements[0]?.getAttribute('src') || '');
-  //fermeturedu navigateur
+
+  // Définir un User-Agent pour éviter d'être bloqué
+  await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3');
+
+  // Navigation sur la page de l'url
+  const response = await page.goto(url, {
+    waitUntil: 'networkidle2',
+    timeout: 30000 
+  });
+
+  console.log(response.status());
+  
+
+  let title = '';
+  let content = '';
+  let imageUrl = '';
+
+  try {
+    // Attendre que le titre soit disponible
+    await page.waitForSelector('h1, h2', { timeout: 5000 });
+
+    // Récupération du titre
+    try {
+      title = await page.$eval('h1', element => element.textContent?.trim() || '');
+    } catch {
+       title = await page.$$eval('h2', elements => elements.slice(0, 2)[1].textContent?.trim());
+    }
+  } catch (error) {
+    console.error('Erreur lors de la récupération du titre:', error);
+  }
+  console.log(title);
+  
+  try {
+    // Attendre que le contenu soit disponible
+    await page.waitForSelector('p', { timeout: 5000 });
+
+    // Récupération du contenu
+    content = await page.$$eval('p', elements => elements.slice(0, 2).map(element => element.textContent?.trim()).join(' '));
+  } catch (error) {
+    console.error('Erreur lors de la récupération du contenu:', error);
+  }
+  console.log(content);
+
+  try {
+    // Attendre que l'image soit disponible
+    await page.waitForSelector('img', { timeout: 5000 });
+
+    // Récupération de l'image avec vérification de la largeur
+    imageUrl = await page.$$eval('img', elements => {
+      for (let img of elements) {
+        const width = img.naturalWidth || img.width;
+        if (width >= 100) {
+          return img.getAttribute('src') || '';
+        }
+      }
+      return '';
+    });
+  } catch (error) {
+    console.error('Erreur lors de la récupération de l\'image:', error);
+  }
+  console.log(imageUrl);
+
+  // Fermeture du navigateur
   await browser.close();
 
-  return { title, content , imageUrl};
+  return { title, content, imageUrl };
 }
+
