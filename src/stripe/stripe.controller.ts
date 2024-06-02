@@ -34,7 +34,8 @@ export class StripeController {
     };
 
     const paymentIntent = await this.stripeService.createPaymentIntent(createPaymentDto);
-    console.log(paymentIntent);
-    return { clientSecret: paymentIntent.client_secret };
+    return { clientSecret: paymentIntent.client_secret,
+      status:paymentIntent.status
+     };
   }
 }

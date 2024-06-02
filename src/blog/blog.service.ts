@@ -20,16 +20,11 @@ export class BlogService {
       const { title, content, imageUrl } = await scrapeArticle(url);
       
       //const imgbbImageUrl = await uploadImageToImgbb(imageUrl);
-      console.log(await scrapeArticle(url))
       const article = new Blog();
       article.title = title;
-      console.log("article",article.title)
       article.link = url;
-      console.log("article",article.link)
       article.content = content;
-      console.log("article",article.content)
       article.imageLink = imageUrl;
-      console.log("article",article)
       return await this.blogRepository.save(article);
     } catch (error) {
       throw new Error('Failed to create article from URL');
@@ -68,12 +63,10 @@ export class BlogService {
 async function uploadImageToImgbb(imageUrl: string): Promise<string> {
   const formData = new FormData();
   formData.append("image", imageUrl);
-  console.log(imageUrl)
   const response = await fetch(`https://api.imgbb.com/1/upload?key=${process.env.IMGBB_KEY}`, {
     method: "POST",
     body: formData
   });
-  console.log(response);
   
   const data = await response.json();
 
@@ -107,7 +100,6 @@ async function scrapeArticle(url: string): Promise<{ title: string, content: str
     timeout: 30000 
   });
 
-  console.log(response.status());
   
 
   let title = '';
@@ -127,7 +119,6 @@ async function scrapeArticle(url: string): Promise<{ title: string, content: str
   } catch (error) {
     console.error('Erreur lors de la récupération du titre:', error);
   }
-  console.log(title);
   
   try {
     // Attendre que le contenu soit disponible
@@ -138,7 +129,6 @@ async function scrapeArticle(url: string): Promise<{ title: string, content: str
   } catch (error) {
     console.error('Erreur lors de la récupération du contenu:', error);
   }
-  console.log(content);
 
   try {
     // Attendre que l'image soit disponible
@@ -157,7 +147,6 @@ async function scrapeArticle(url: string): Promise<{ title: string, content: str
   } catch (error) {
     console.error('Erreur lors de la récupération de l\'image:', error);
   }
-  console.log(imageUrl);
 
   // Fermeture du navigateur
   await browser.close();

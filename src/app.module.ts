@@ -9,7 +9,6 @@ import { AuthController } from './auth/auth.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { ProductsModule } from './products/products.module';
 import { StripeModule } from './stripe/stripe.module';
 
 @Module({
@@ -17,7 +16,6 @@ import { StripeModule } from './stripe/stripe.module';
     BlogModule,
     AuthModule,
     UsersModule,
-    ProductsModule,
     StripeModule,
     ConfigModule.forRoot({ envFilePath: '.env' }),
     JwtModule.register({

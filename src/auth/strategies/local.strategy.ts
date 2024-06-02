@@ -17,7 +17,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException();
     }
     if (await bcrypt.compare(password, user.password)) {
-      console.log('User validated:', user);
       return user;
     } else {
       throw new UnauthorizedException();

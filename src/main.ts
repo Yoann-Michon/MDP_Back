@@ -7,7 +7,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors({
     allowedHeaders: ['content-type'],
-    origin: 'http://localhost:3000',
+    origin: 'http://localhost:3000'||"https://unjourdepaix.netlify.app",
     credentials: true,
   });
   await app.listen(4000);
