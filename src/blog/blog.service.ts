@@ -150,8 +150,8 @@ async function scrapeArticle(url: string): Promise<{ title: string, content: str
           return img.getAttribute('src') || '';
         }
       }
-      return '';
       console.log(imageUrl);
+      return '';
       
     });
   } catch (error) {
