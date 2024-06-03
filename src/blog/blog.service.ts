@@ -121,6 +121,8 @@ async function scrapeArticle(url: string): Promise<{ title: string, content: str
     } catch {
        title = await page.$$eval('h2', elements => elements.slice(0, 2)[1].textContent?.trim());
     }
+    console.log(title);
+    
   } catch (error) {
     console.error('Erreur lors de la récupération du titre:', error);
   }
@@ -131,6 +133,7 @@ async function scrapeArticle(url: string): Promise<{ title: string, content: str
 
     // Récupération du contenu
     content = await page.$$eval('p', elements => elements.slice(0, 2).map(element => element.textContent?.trim()).join(' '));
+    console.log(content)
   } catch (error) {
     console.error('Erreur lors de la récupération du contenu:', error);
   }
@@ -148,6 +151,8 @@ async function scrapeArticle(url: string): Promise<{ title: string, content: str
         }
       }
       return '';
+      console.log(imageUrl);
+      
     });
   } catch (error) {
     console.error('Erreur lors de la récupération de l\'image:', error);
