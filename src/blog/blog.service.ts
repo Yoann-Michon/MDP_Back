@@ -83,6 +83,7 @@ async function uploadImageToImgbb(imageUrl: string): Promise<string> {
 }
 
 async function scrapeArticle(url: string): Promise<{ title: string, content: string, imageUrl: string }> {
+  console.log('url :',url)
   const browser = await puppeteer.launch({
     headless: true,
     args: [
@@ -93,8 +94,10 @@ async function scrapeArticle(url: string): Promise<{ title: string, content: str
       '--disable-gpu'
     ]
   });
-
+  console.log('-------------------------------------------------------------------------')
+  console.log('before page')
   const page = await browser.newPage();
+  console.log('after page')
 
   // Définir un User-Agent pour éviter d'être bloqué
   await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3');
@@ -126,6 +129,9 @@ async function scrapeArticle(url: string): Promise<{ title: string, content: str
   } catch (error) {
     console.error('Erreur lors de la récupération du titre:', error);
   }
+  console.log('-------------------------------------------------------------------------')
+
+  console.log('title',title)
   
   try {
     // Attendre que le contenu soit disponible
@@ -137,7 +143,9 @@ async function scrapeArticle(url: string): Promise<{ title: string, content: str
   } catch (error) {
     console.error('Erreur lors de la récupération du contenu:', error);
   }
+  console.log('-------------------------------------------------------------------------')
 
+  console.log('content',content)
   try {
     // Attendre que l'image soit disponible
     await page.waitForSelector('img', { timeout: 5000 });
@@ -158,9 +166,12 @@ async function scrapeArticle(url: string): Promise<{ title: string, content: str
     console.error('Erreur lors de la récupération de l\'image:', error);
   }
 
+
   // Fermeture du navigateur
   await browser.close();
+  console.log('-------------------------------------------------------------------------')
 
+  console.log('before return title content and imageUrl',title,content,imageUrl)
   return { title, content, imageUrl };
 }
 
