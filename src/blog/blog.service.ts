@@ -84,16 +84,22 @@ async function uploadImageToImgbb(imageUrl: string): Promise<string> {
 
 async function scrapeArticle(url: string): Promise<{ title: string, content: string, imageUrl: string }> {
   console.log('url :',url)
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-accelerated-2d-canvas',
-      '--disable-gpu'
-    ]
-  });
+  let browser;
+  try{
+
+    browser = await puppeteer.launch({
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--disable-gpu'
+      ]
+    });
+  }catch(error){
+    throw error;
+  }
   console.log('-------------------------------------------------------------------------')
   console.log('before page')
   const page = await browser.newPage();
