@@ -9,6 +9,7 @@ export class BlogController {
 
   @Post()
   async create(@Body('url') url:string): Promise<Blog>  {
+    console.log(url)
     return await this.blogService.create(url);
   }
 

@@ -25,6 +25,7 @@ export class BlogService {
       article.link = url;
       article.content = content;
       article.imageLink = imageUrl;
+      console.log(article)
       return await this.blogRepository.save(article);
     } catch (error) {
       throw new Error('Failed to create article from URL');

@@ -6,8 +6,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors({
-    allowedHeaders: ['content-type'],
-    origin: 'http://localhost:3000'||"https://unjourdepaix.netlify.app",
+    origin: ['http://localhost:3000', 'https://unjourdepaix.netlify.app'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Origin', 'X-Requested-With', 'Content', 'Accept', 'Content-Type', 'Authorization'],
     credentials: true,
   });
   await app.listen(4000);
