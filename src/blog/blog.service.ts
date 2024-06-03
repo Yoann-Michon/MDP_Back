@@ -96,9 +96,11 @@ async function scrapeArticle(url: string): Promise<{ title: string, content: str
     page = await browser.newPage();
     console.log('after page')
   }catch(error){
+    console.log('browser initialization error')
     throw error;
   }
 
+  console.log('before set user agent')
   // Définir un User-Agent pour éviter d'être bloqué
   await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3');
 
