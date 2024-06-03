@@ -16,8 +16,12 @@ export class BlogService {
   ) {}
 
   async create(url: string): Promise<Blog> {
+    console.log(url)
     try {
       const { title, content, imageUrl } = await scrapeArticle(url);
+      console.log(title);
+      console.log(content);
+      console.log(imageUrl);
       
       //const imgbbImageUrl = await uploadImageToImgbb(imageUrl);
       const article = new Blog();
