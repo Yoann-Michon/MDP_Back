@@ -85,6 +85,7 @@ async function uploadImageToImgbb(imageUrl: string): Promise<string> {
 async function scrapeArticle(url: string): Promise<{ title: string, content: string, imageUrl: string }> {
   console.log('url :',url)
   let browser;
+  let page;
   try{
 
     browser = await puppeteer.launch({
@@ -97,13 +98,13 @@ async function scrapeArticle(url: string): Promise<{ title: string, content: str
         '--disable-gpu'
       ]
     });
+    console.log('-------------------------------------------------------------------------')
+    console.log('before page')
+    page = await browser.newPage();
+    console.log('after page')
   }catch(error){
     throw error;
   }
-  console.log('-------------------------------------------------------------------------')
-  console.log('before page')
-  const page = await browser.newPage();
-  console.log('after page')
 
   // Définir un User-Agent pour éviter d'être bloqué
   await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3');
